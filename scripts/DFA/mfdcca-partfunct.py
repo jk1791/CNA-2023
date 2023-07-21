@@ -105,8 +105,8 @@ def output1():
 
 # -------------------------------------------------------------- #
 
-print("\n     MFDCCA ver. 1.0 converted to python (18.07.2023)\n\n")
-
+#    MFDCCA ver. 1.0 converted to python (18.07.2023)
+#
 #    infiles = []
 #    infiles.append(input("Time series 1: "))
 #    infiles.append(input("Time series 2: "))
