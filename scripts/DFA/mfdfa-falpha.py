@@ -225,8 +225,8 @@ def plot_partfunct():
 
 # -------------------------------------------------------------- #
 
-print("\n     h(q), tau(q), f(alpha) from univariate partition function (19.07.2023)\n\n")
-
+#    h(q), tau(q), f(alpha) from univariate partition function (19.07.2023)
+#
 #    infiles.append(input("input file: "))
 #    num_scales = int(input('number of different scales : '))
 #    min_range = int(input('minimum range : '))
