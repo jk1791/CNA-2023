@@ -318,7 +318,7 @@ def plot_partfunct():
 
 # -------------------------------------------------------------- #
 
-print("\n     h(q), tau(q), f(alpha), rho(q) from partition functions (20.07.2023)\n\n")
+#    h(q), tau(q), f(alpha), rho(q) from partition functions (20.07.2023)
 
 infiles = []
 #    infiles.append(input("univariate partition function no. 2: "))
