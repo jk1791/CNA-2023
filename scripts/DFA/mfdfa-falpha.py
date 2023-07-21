@@ -267,7 +267,6 @@ with open(infile, 'r') as f:
             m = 0
         else:
             items = line.split()
-            print (m,j,items[2])
             partfunct[j,m] = items[2]
             m += 1
             if j == 0:
