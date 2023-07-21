@@ -134,8 +134,8 @@ print("\n     MFDCCA ver. 1.0 converted to python (18.07.2023)\n\n")
 infiles = []
 
 # input files
-infiles.append("gauss_ts1.dat")
-infiles.append("gauss_ts3.dat")
+infiles.append("arfima_d0.1_T65k.dat")
+infiles.append("arfima_d0.4_T65k.dat")
 # time series column
 column = 1
 # minimum scale & number of different scales
