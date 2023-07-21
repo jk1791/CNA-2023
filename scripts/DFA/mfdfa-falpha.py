@@ -1,5 +1,7 @@
 import numpy as np
 import math
+from scipy import special
+import matplotlib.pyplot as plt
 
 # -------------------------------------------------------------- #
 
@@ -95,6 +97,65 @@ def output(alpha, f_alpha, tau, hurst_est):
 
 # -------------------------------------------------------------- #
 
+def plot_deriv(hoelder,falpha,tau,hurst_est,qzero_pos):
+
+    global funct, q_min, q_max, q_step
+
+    renyi = np.zeros(q_num)
+    for j in range(q_num):
+        renyi[j] = q_min + j * q_step
+    hurst_width = hurst_est[0] - hurst_est[-1]
+    alpha_width = abs(hoelder[0] - hoelder[-1])
+    left_width = hoelder[qzero_pos] - hoelder[-1]
+    right_width = hoelder[0] - hoelder[qzero_pos]
+
+    asymmetry = (left_width - right_width) / (left_width + right_width)
+
+    if funct == 'hurstq':
+        min_xaxis = renyi[0]
+        max_xaxis = renyi[-1]
+        min_yaxis = hurst_est[0]
+        max_yaxis = hurst_est[-1]
+    if funct == 'tauq':
+        min_xaxis = renyi[0]
+        max_xaxis = renyi[-1]
+        min_yaxis = tau[0]
+        max_yaxis = tau[-1]
+    if funct == 'falpha':
+        min_xaxis = hoelder[0]
+        if min_xaxis > 0: min_xaxis = 0
+        max_xaxis = hoelder[-1]
+        if max_xaxis < 1: max_xaxis = 1
+        min_yaxis = 0.0
+        max_yaxis = 1.2
+
+    fig = plt.figure(figsize=(10, 6))
+    plt.title('Singularity spectrum $f(\\alpha)$')
+    plt.xlabel('$\\alpha$',fontsize=15)
+    plt.ylabel('$f(\\alpha)$',fontsize=15)
+    for j in range(q_num):
+        if funct == 'hurstq': plt.plot(renyi,hurst_est)
+        if funct == 'tauq': plt.plot(renyi,tau)
+        if funct == 'falpha': plt.plot(hoelder,falpha)
+    plt.xlim(float(min_xaxis),float(max_xaxis))
+    plt.ylim(min_yaxis,max_yaxis)
+    plt.legend()
+    if funct == 'hurstq':
+        plt.xticks(np.arange(q_min,q_max))
+        plt.text(0.2,0.15, f'$\Delta h$={hurst_width:.2f}', fontsize=15)
+    if funct == 'tauq':
+        plt.xticks(np.arange(q_min,q_max))
+    if funct == 'falpha':
+        plt.xticks(np.arange(0,1,0.1))
+        alpha_subscript = '\\alpha'
+        plt.text(0.75,0.25, f'$\Delta {alpha_subscript}$={alpha_width:.2f}', fontsize=15)
+        plt.text(0.75,0.15, f'$A_{alpha_subscript}$={asymmetry:.2f}', fontsize=15)
+    plt.grid(linestyle='--',linewidth=0.5,alpha=0.5)
+        
+    plt.show()
+
+# -------------------------------------------------------------- #
+
 def legendre_transform():
 
     hurst_est = np.zeros(q_num)
@@ -106,7 +167,7 @@ def legendre_transform():
             act_scale = round(np.exp(np.log(float(min_scale)) + m * logwin_step))
             if min_range <= act_scale <= max_range:
                 vector[v,0] = float(act_scale)
-                vector[v,1] = partfunct[m,j]
+                vector[v,1] = partfunct[j,m]
                 v += 1
 
         vct_lngth = v - 1
@@ -123,11 +184,44 @@ def legendre_transform():
         q_act = q_min + j * q_step
         if q_act == 0.0:
             q_act += q_step / 4.0
+            qzero_pos = j
         alpha[j] = hurst_est[j] + q_act * hurst_deriv[j]
         f_alpha[j] = q_act * (alpha[j] - hurst_est[j]) + 1.0
         tau[j] = q_act * hurst_est[j] - 1.0
 
+    plot_deriv (alpha,f_alpha,tau,hurst_est,qzero_pos)
+
     output(alpha,f_alpha,tau,hurst_est)
+
+# -------------------------------------------------------------- #
+
+def onclick(event):
+
+    global click, min_range, max_range
+    if click > 1: click = 0
+    if click == 0: min_range = event.xdata
+    if click == 1:
+        max_range = event.xdata
+    click += 1
+
+# -------------------------------------------------------------- #
+
+def plot_partfunct():
+
+    fig = plt.figure(figsize=(10, 6))
+    plt.title('Partition function $F_q(s)$')
+    plt.xlabel('scale $s$ [pts]')
+    plt.ylabel('$F_q(s)$')
+    for j in range(q_num):
+        plt.loglog(scales, partfunct[j])
+    plt.xlim(float(min_scale),float(max_scale))
+    plt.ylim(partfunct[0,0],partfunct[q_num-1,num_scales-1])
+    plt.legend()
+    plt.grid()
+
+    cid = fig.canvas.mpl_connect('button_press_event', onclick)
+
+    plt.show()
 
 # -------------------------------------------------------------- #
 
@@ -146,23 +240,22 @@ print("\n     h(q), tau(q), f(alpha) from univariate partition function (19.07.2
 #    INPUT PARAMETERS:
 
 # input file
-infile = "gauss_ts1_partfunct.dat"
+infile = "levy_stable_alpha1.5_T100k_partfunct.dat"
 # number of scales
 num_scales = 50
-# fitting scale range
-min_range = 10
-max_range = 1000
 # range of the Renyi parameter q
 q_min = -4
 q_max = 4
 q_step = 0.2
+# function to be displayed ('falpha' / 'tauq' / 'hurstq')
+funct = 'falpha'
 
 # ====================================================================================== #
 
 q_num = int((q_max - q_min) / q_step) + 1
 
 scales = []
-partfunct = np.zeros((num_scales,q_num))
+partfunct = np.zeros((q_num,num_scales))
 items = np.zeros(3)
 
 with open(infile, 'r') as f:
@@ -175,14 +268,19 @@ with open(infile, 'r') as f:
         else:
             items = line.split()
             print (m,j,items[2])
-            partfunct[m,j] = items[2]
+            partfunct[j,m] = items[2]
             m += 1
             if j == 0:
-                scales.append(items[1])
+                scales.append(float(items[1]))
 
 min_scale = scales[0]
 max_scale = scales[num_scales - 1]
 logwin_step = (np.log(float(max_scale)) - np.log(float(min_scale))) / (num_scales - 1)
+
+min_range = max_range = 0
+click = 0
+
+plot_partfunct()
 
 legendre_transform()
 

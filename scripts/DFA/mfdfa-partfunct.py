@@ -14,23 +14,23 @@ def partition_function ():
 
     logwin_step = (np.log(max_scale) - np.log(min_scale)) / (num_scales - 1)
     for m in range(num_scales):
-        window_lngth = round(np.exp(np.log(min_scale) + m * logwin_step))
+        act_scale = round(np.exp(np.log(min_scale) + m * logwin_step))
         if m == num_scales - 1:
-            window_lngth = max_scale
+            act_scale = max_scale
 
-        win_num = ts_lngth // window_lngth
+        win_num = ts_lngth // act_scale
         segment_var = np.zeros(2 * win_num)
         for w in range(win_num):
-            win_pos = w * window_lngth
-            window = profile[win_pos:win_pos + window_lngth]
-            polynomial = np.polyfit(np.arange(1, window_lngth + 1), window, polyorder)
-            segment_var[w] = np.mean((window - np.polyval(polynomial, np.arange(1, window_lngth + 1)))**2)
+            win_pos = w * act_scale
+            window = profile[win_pos:win_pos + act_scale]
+            polynomial = np.polyfit(np.arange(1, act_scale + 1), window, polyorder)
+            segment_var[w] = np.mean((window - np.polyval(polynomial, np.arange(1, act_scale + 1)))**2)
 
         for w in range(win_num):
-            win_pos = (ts_lngth % window_lngth) + w * window_lngth
-            window = profile[win_pos:win_pos + window_lngth]
-            polynomial = np.polyfit(np.arange(1, window_lngth + 1), window, polyorder)
-            segment_var[win_num + w] = np.mean((window - np.polyval(polynomial, np.arange(1, window_lngth + 1)))**2)
+            win_pos = (ts_lngth % act_scale) + w * act_scale
+            window = profile[win_pos:win_pos + act_scale]
+            polynomial = np.polyfit(np.arange(1, act_scale + 1), window, polyorder)
+            segment_var[win_num + w] = np.mean((window - np.polyval(polynomial, np.arange(1, act_scale + 1)))**2)
 
         for j in range(q_num):
             q_act = q_min + j * q_step
@@ -53,8 +53,8 @@ def output1():
                 q_act += q_step / 4.0
 
             for m in range(num_scales):
-                window_lngth = round(np.exp(np.log(min_scale) + m * logwin_step))
-                file.write(f'{q_act} {window_lngth} {partfunct[m,j]}\n')
+                act_scale = round(np.exp(np.log(min_scale) + m * logwin_step))
+                file.write(f'{q_act} {act_scale} {partfunct[m,j]}\n')
             file.write('\n')
 
 # -------------------------------------------------------------- #
@@ -93,7 +93,7 @@ infiles.append('')
 #    INPUT PARAMETERS:
 
 # input file
-infiles.append("gauss_ts1.dat")
+infiles.append("levy_stable_alpha1.5_T100k.dat")
 # time series column
 column = 1
 # minimum scale & number of different scales
