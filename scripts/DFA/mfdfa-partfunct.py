@@ -59,8 +59,8 @@ def output1():
 
 # -------------------------------------------------------------- #
 
-print("\n     MFDFA ver. 1.0 converted to python (18.07.2023)\n\n")
-
+#    MFDFA ver. 1.0 converted to python (18.07.2023)
+#
 #    infiles = []
 infiles = []
 #    file_num = int(input("number of input files: "))
