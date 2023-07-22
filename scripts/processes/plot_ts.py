@@ -11,8 +11,6 @@ import matplotlib.pyplot as plt
 
 # input file
 infile = "pareto_signed_b6.0_T100k.dat"
-# number of columns
-num_col = 1
 # time series column
 column = 1
 
