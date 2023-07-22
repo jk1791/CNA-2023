@@ -167,7 +167,7 @@ def legendre_transform():
             act_scale = round(np.exp(np.log(float(min_scale)) + m * logwin_step))
             if min_range <= act_scale <= max_range:
                 vector[v,0] = float(act_scale)
-                vector[v,1] = partfunct[j,m]
+                vector[v,1] = fluctfunct[j,m]
                 v += 1
 
         vct_lngth = v - 1
@@ -206,16 +206,16 @@ def onclick(event):
 
 # -------------------------------------------------------------- #
 
-def plot_partfunct():
+def plot_fluctfunct():
 
     fig = plt.figure(figsize=(10, 6))
-    plt.title('Partition function $F_q(s)$')
+    plt.title('Fluctuation function $F_q(s)$')
     plt.xlabel('scale $s$ [pts]')
     plt.ylabel('$F_q(s)$')
     for j in range(q_num):
-        plt.loglog(scales, partfunct[j])
+        plt.loglog(scales, fluctfunct[j])
     plt.xlim(float(min_scale),float(max_scale))
-    plt.ylim(partfunct[0,0],partfunct[q_num-1,num_scales-1])
+    plt.ylim(fluctfunct[0,0],fluctfunct[q_num-1,num_scales-1])
     plt.legend()
     plt.grid()
 
@@ -225,7 +225,7 @@ def plot_partfunct():
 
 # -------------------------------------------------------------- #
 
-#    h(q), tau(q), f(alpha) from univariate partition function (19.07.2023)
+#    h(q), tau(q), f(alpha) from univariate fluctuation function (19.07.2023)
 #
 #    infiles.append(input("input file: "))
 #    num_scales = int(input('number of different scales : '))
@@ -240,7 +240,7 @@ def plot_partfunct():
 #    INPUT PARAMETERS:
 
 # input file
-infile = "Kaskada_LN_l120_n10_1_partfunct.dat"
+infile = "arfima_d0.4_T65k_arfima_d-0.2_T65k_segmentwise_mixed6%_fluctfunct.dat"
 # number of scales
 num_scales = 50
 # range of the Renyi parameter q
@@ -255,7 +255,7 @@ funct = 'falpha'
 q_num = int((q_max - q_min) / q_step) + 1
 
 scales = []
-partfunct = np.zeros((q_num,num_scales))
+fluctfunct = np.zeros((q_num,num_scales))
 items = np.zeros(3)
 
 with open(infile, 'r') as f:
@@ -267,7 +267,7 @@ with open(infile, 'r') as f:
             m = 0
         else:
             items = line.split()
-            partfunct[j,m] = items[2]
+            fluctfunct[j,m] = items[2]
             m += 1
             if j == 0:
                 scales.append(float(items[1]))
@@ -279,7 +279,7 @@ logwin_step = (np.log(float(max_scale)) - np.log(float(min_scale))) / (num_scale
 min_range = max_range = 0
 click = 0
 
-plot_partfunct()
+plot_fluctfunct()
 
 legendre_transform()
 

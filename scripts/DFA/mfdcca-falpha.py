@@ -140,7 +140,7 @@ def output(alpha, f_alpha, tau, lambda_est, hx_est, hy_est, hxy_est, rhoq):
                 q_act += q_step / 4.0
 
             for m in range(num_scales):
-                rhoq[j,m] = partfunct[2,j,m] / math.sqrt(partfunct[0,j,m] * partfunct[1,j,m])
+                rhoq[j,m] = fluctfunct[2,j,m] / math.sqrt(fluctfunct[0,j,m] * fluctfunct[1,j,m])
                 act_scale = round(np.exp(np.log(float(min_scale)) + m * logwin_step))
                 file.write(f'{q_act} {act_scale} {rhoq[j,m]}\n')
             file.write('\n')
@@ -237,7 +237,7 @@ def legendre_transform():
             act_scale = round(np.exp(np.log(float(min_scale)) + m * logwin_step))
             if min_range <= act_scale <= max_range:
                 vector[v,0] = float(act_scale)
-                vector[v,1] = partfunct[2,j,m]
+                vector[v,1] = fluctfunct[2,j,m]
                 v += 1
 
         vct_lngth = v
@@ -248,7 +248,7 @@ def legendre_transform():
             act_scale = round(np.exp(np.log(float(min_scale)) + m * logwin_step))
             if min_range <= act_scale <= max_range:
                 vector[v,0] = float(act_scale)
-                vector[v,1] = partfunct[0,j,m]
+                vector[v,1] = fluctfunct[0,j,m]
                 v += 1
 
         hx_est[j] = power_fit(vct_lngth,num_scales,vector)
@@ -258,7 +258,7 @@ def legendre_transform():
             act_scale = round(np.exp(np.log(float(min_scale)) + m * logwin_step))
             if min_range <= act_scale <= max_range:
                 vector[v,0] = float(act_scale)
-                vector[v,1] = partfunct[1,j,m]
+                vector[v,1] = fluctfunct[1,j,m]
                 v += 1
 
         hy_est[j] = power_fit(vct_lngth,num_scales,vector)
@@ -299,16 +299,16 @@ def onclick(event):
 
 # -------------------------------------------------------------- #
 
-def plot_partfunct():
+def plot_fluctfunct():
 
     fig = plt.figure(figsize=(10, 6))
-    plt.title('Bivariate partition function $F_q(s)$')
+    plt.title('Bivariate fluctuation function $F_q(s)$')
     plt.xlabel('scale $s$ [pts]')
     plt.ylabel('$F_q(s)$')
     for j in range(q_num):
-        plt.loglog(scales,partfunct[2,j])
+        plt.loglog(scales,fluctfunct[2,j])
     plt.xlim(float(min_scale),float(max_scale))
-    plt.ylim(partfunct[2,0,0],partfunct[2,q_num-1,num_scales-1])
+    plt.ylim(fluctfunct[2,0,0],fluctfunct[2,q_num-1,num_scales-1])
     plt.legend()
     plt.grid()
 
@@ -318,12 +318,12 @@ def plot_partfunct():
 
 # -------------------------------------------------------------- #
 
-#    h(q), tau(q), f(alpha), rho(q) from partition functions (20.07.2023)
+#    h(q), tau(q), f(alpha), rho(q) from fluctuation functions (20.07.2023)
 
 infiles = []
-#    infiles.append(input("univariate partition function no. 2: "))
-#    infiles.append(input("univariate partition function no. 1: "))
-#    infiles.append(input("bivariate partition function: "))
+#    infiles.append(input("univariate fluctuation function no. 2: "))
+#    infiles.append(input("univariate fluctuation function no. 1: "))
+#    infiles.append(input("bivariate fluctuation function: "))
 #    min_range = int(input('minimum scale : '))
 #    max_range = int(input('maximum scale : '))
 #    q_min = float(input('minimum q : '))
@@ -334,10 +334,10 @@ infiles = []
 
 #    INPUT PARAMETERS:
 
-# partition function files
-infiles.append("arfima_d0.1_T65k_partfunct0.dat")
-infiles.append("arfima_d0.4_T65k_partfunct1.dat")
-infiles.append("arfima_d0.1_T65k_arfima_d0.4_T65k_partfunct.dat")
+# fluctuation function files
+infiles.append("arfima_d0.1_T65k_fluctfunct0.dat")
+infiles.append("arfima_d0.4_T65k_fluctfunct1.dat")
+infiles.append("arfima_d0.1_T65k_arfima_d0.4_T65k_fluctfunct.dat")
 # number of scales
 num_scales = 50
 # range and step of the Renyi parameter q
@@ -353,7 +353,7 @@ file_num = 3
 q_num = int((q_max - q_min) / q_step) + 1
 
 scales = []
-partfunct = np.zeros((file_num,q_num,num_scales))
+fluctfunct = np.zeros((file_num,q_num,num_scales))
 items = np.zeros(3)
 
 for k in range(file_num):
@@ -366,7 +366,7 @@ for k in range(file_num):
                 m = 0
             else:
                 items = line.split()
-                partfunct[k,j,m] = items[2]
+                fluctfunct[k,j,m] = items[2]
                 m += 1
                 if k == 0 and j == 0:
                     scales.append(float(items[1]))
@@ -378,7 +378,7 @@ logwin_step = (np.log(float(max_scale)) - np.log(float(min_scale))) / (num_scale
 min_range = max_range = 0
 click = 0
 
-plot_partfunct()
+plot_fluctfunct()
 
 legendre_transform()
 
