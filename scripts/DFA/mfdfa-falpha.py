@@ -122,9 +122,9 @@ def plot_deriv(hoelder,falpha,tau,hurst_est,qzero_pos):
         min_yaxis = tau[0]
         max_yaxis = tau[-1]
     if funct == 'falpha':
-        min_xaxis = hoelder[0]
+        min_xaxis = hoelder[-1]
         if min_xaxis > 0: min_xaxis = 0
-        max_xaxis = hoelder[-1]
+        max_xaxis = hoelder[0]
         if max_xaxis < 1: max_xaxis = 1
         min_yaxis = 0.0
         max_yaxis = 1.2
@@ -146,7 +146,7 @@ def plot_deriv(hoelder,falpha,tau,hurst_est,qzero_pos):
     if funct == 'tauq':
         plt.xticks(np.arange(q_min,q_max))
     if funct == 'falpha':
-        plt.xticks(np.arange(0,1,0.1))
+        plt.xticks(np.arange(0,max_xaxis,0.1))
         alpha_subscript = '\\alpha'
         plt.text(0.75,0.25, f'$\Delta {alpha_subscript}$={alpha_width:.2f}', fontsize=15)
         plt.text(0.75,0.15, f'$A_{alpha_subscript}$={asymmetry:.2f}', fontsize=15)
@@ -240,7 +240,7 @@ def plot_partfunct():
 #    INPUT PARAMETERS:
 
 # input file
-infile = "levy_stable_alpha1.5_T100k_partfunct.dat"
+infile = "Kaskada_LN_l120_n10_1_partfunct.dat"
 # number of scales
 num_scales = 50
 # range of the Renyi parameter q
