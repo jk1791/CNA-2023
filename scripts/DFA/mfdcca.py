@@ -186,7 +186,7 @@ def plot_deriv(hoelder,falpha,tau,lambda_est,hxy_est,qzero_pos):
         else:
             asymmetry = 'undef'
 
-    fig = plt.figure(figsize=(10, 6))
+    fig = plt.figure(figsize=(10,6))
     plt.xlim(float(min_xaxis),float(max_xaxis))
     plt.ylim(min_yaxis,max_yaxis)
     plt.grid(linestyle='--',linewidth=0.5,alpha=0.5)
@@ -215,7 +215,7 @@ def plot_deriv(hoelder,falpha,tau,lambda_est,hxy_est,qzero_pos):
         alpha_subscript = '\\alpha'
         plt.text(0.75,0.25,f'$\Delta {alpha_subscript}$={alpha_width:.2f}', transform=plt.gcf().transFigure, fontsize=15)
         if asymmetry != 'undef':
-            plt.text(0.75,0.15,f'$A_{alpha_subscript}$={asymmetry:.2f}', transform=plt.gcf().transFigure, fontsize=15)
+            plt.text(0.75,0.2,f'$A_{alpha_subscript}$={asymmetry:.2f}', transform=plt.gcf().transFigure, fontsize=15)
         else:
             plt.text(0.75,0.15,f'$A_{alpha_subscript}$={asymmetry}', transform=plt.gcf().transFigure, fontsize=15)
 
