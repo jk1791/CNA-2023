@@ -217,7 +217,7 @@ def plot_deriv(hoelder,falpha,tau,lambda_est,hxy_est,qzero_pos):
         if asymmetry != 'undef':
             plt.text(0.75,0.2,f'$A_{alpha_subscript}$={asymmetry:.2f}', transform=plt.gcf().transFigure, fontsize=15)
         else:
-            plt.text(0.75,0.15,f'$A_{alpha_subscript}$={asymmetry}', transform=plt.gcf().transFigure, fontsize=15)
+            plt.text(0.75,0.2,f'$A_{alpha_subscript}$={asymmetry}', transform=plt.gcf().transFigure, fontsize=15)
 
     fig.canvas.mpl_connect('key_press_event',close_on_key)
 
