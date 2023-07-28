@@ -4,9 +4,6 @@ from scipy import special
 import matplotlib.pyplot as plt
 import argparse
 import sys
-import tkinter as tk
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-import threading
 
 # -------------------------------------------------------------- #
 
@@ -231,7 +228,7 @@ def onclick(event):
             temp = min_range
             min_range = max_range
             max_range = temp
-        if min_range = max_range: max_range += 1
+        if min_range == max_range: max_range += 1
         
 # -------------------------------------------------------------- #
 
