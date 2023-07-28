@@ -125,9 +125,12 @@ def plot_deriv(hoelder,falpha,tau,hurst_est,qzero_pos):
         min_yaxis = 0.0
         max_yaxis = 1.2
         alpha_width = abs(hoelder[0] - hoelder[-1])
-        left_width = hoelder[qzero_pos] - hoelder[-1]
-        right_width = hoelder[0] - hoelder[qzero_pos]
-        asymmetry = (left_width - right_width) / (left_width + right_width)
+        if min_scale <= 0.0:
+            left_width = hoelder[qzero_pos] - hoelder[-1]
+            right_width = hoelder[0] - hoelder[qzero_pos]
+            asymmetry = (left_width - right_width) / (left_width + right_width)
+        else:
+            asymmetry = 'undef'
 
     fig = plt.figure(figsize=(10,6))
     plt.xlim(float(min_xaxis),float(max_xaxis))
@@ -154,7 +157,10 @@ def plot_deriv(hoelder,falpha,tau,hurst_est,qzero_pos):
         plt.xticks(np.arange(0,max_xaxis,0.1))
         alpha_subscript = '\\alpha'
         plt.text(0.75,0.25, f'$\Delta {alpha_subscript}$={alpha_width:.2f}', transform=plt.gcf().transFigure, fontsize=15)
-        plt.text(0.75,0.2, f'$A_{alpha_subscript}$={asymmetry:.2f}', transform=plt.gcf().transFigure, fontsize=15)
+        if asymmetry != 'undef':
+            plt.text(0.75,0.2, f'$A_{alpha_subscript}$={asymmetry:.2f}', transform=plt.gcf().transFigure, fontsize=15)
+        else:
+            plt.text(0.75,0.15,f'$A_{alpha_subscript}$={asymmetry}', transform=plt.gcf().transFigure, fontsize=15)
 
     fig.canvas.mpl_connect('key_press_event',close_on_key)
 
@@ -186,6 +192,7 @@ def legendre_transform():
 
     hurst_deriv = derivative(q_num,hurst_est)
 
+    qzero_pos = 0
     for j in range(q_num):
         q_act = q_min + j * q_step
         if q_act == 0.0:
