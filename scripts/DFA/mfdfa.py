@@ -106,18 +106,12 @@ def plot_deriv(hoelder,falpha,tau,hurst_est,qzero_pos):
     renyi = np.zeros(q_num)
     for j in range(q_num):
         renyi[j] = q_min + j * q_step
-    hurst_width = hurst_est[0] - hurst_est[-1]
-    alpha_width = abs(hoelder[0] - hoelder[-1])
-    left_width = hoelder[qzero_pos] - hoelder[-1]
-    right_width = hoelder[0] - hoelder[qzero_pos]
-
-    asymmetry = (left_width - right_width) / (left_width + right_width)
-
     if funct == 'hurstq':
         min_xaxis = renyi[0]
         max_xaxis = renyi[-1]
         min_yaxis = hurst_est[-1] * 0.8
         max_yaxis = hurst_est[0] * 1.2
+        hurst_width = hurst_est[0] - hurst_est[-1]
     if funct == 'tauq':
         min_xaxis = renyi[0]
         max_xaxis = renyi[-1]
@@ -130,38 +124,38 @@ def plot_deriv(hoelder,falpha,tau,hurst_est,qzero_pos):
         if max_xaxis < 1: max_xaxis = 1
         min_yaxis = 0.0
         max_yaxis = 1.2
+        alpha_width = abs(hoelder[0] - hoelder[-1])
+        left_width = hoelder[qzero_pos] - hoelder[-1]
+        right_width = hoelder[0] - hoelder[qzero_pos]
+        asymmetry = (left_width - right_width) / (left_width + right_width)
 
     fig = plt.figure(figsize=(10, 6))
+    plt.xlim(float(min_xaxis),float(max_xaxis))
+    plt.ylim(min_yaxis,max_yaxis)
+    plt.grid(linestyle='--',linewidth=0.5,alpha=0.5)
     if funct == 'hurstq':
         plt.title('Generalized Hurst exponent $h(q)$')
         plt.xlabel('$q$',fontsize=15)
         plt.ylabel('$h(q)$',fontsize=15)
+        plt.plot(renyi,hurst_est)
+        plt.xticks(np.arange(q_min,q_max))
+        plt.text(0.2,0.2,f'$\Delta h$={hurst_width:.2f}',transform=plt.gcf().transFigure,fontsize=15)
     if funct == 'tauq':
         plt.title('Multifractal spectrum $\\tau(q)$')
         plt.xlabel('$q$',fontsize=15)
         plt.ylabel('$\\tau(q)$',fontsize=15)
+        plt.plot(renyi,tau)
+        plt.xticks(np.arange(q_min,q_max))
     if funct == 'falpha':
         plt.title('Singularity spectrum $f(\\alpha)$')
         plt.xlabel('$\\alpha$',fontsize=15)
         plt.ylabel('$f(\\alpha)$',fontsize=15)
-
-    for j in range(q_num):
-        if funct == 'hurstq': plt.plot(renyi,hurst_est)
-        if funct == 'tauq': plt.plot(renyi,tau)
-        if funct == 'falpha': plt.plot(hoelder,falpha)
-    plt.xlim(float(min_xaxis),float(max_xaxis))
-    plt.ylim(min_yaxis,max_yaxis)
-    if funct == 'hurstq':
-        plt.xticks(np.arange(q_min,q_max))
-        plt.text(0.2,0.2,f'$\Delta h$={hurst_width:.2f}',transform=plt.gcf().transFigure,fontsize=15)
-    if funct == 'tauq':
-        plt.xticks(np.arange(q_min,q_max))
-    if funct == 'falpha':
+        plt.plot(hoelder,falpha)
         plt.xticks(np.arange(0,max_xaxis,0.1))
         alpha_subscript = '\\alpha'
         plt.text(0.75,0.25, f'$\Delta {alpha_subscript}$={alpha_width:.2f}', transform=plt.gcf().transFigure, fontsize=15)
         plt.text(0.75,0.2, f'$A_{alpha_subscript}$={asymmetry:.2f}', transform=plt.gcf().transFigure, fontsize=15)
-    plt.grid(linestyle='--',linewidth=0.5,alpha=0.5)
+
     fig.canvas.mpl_connect('key_press_event',close_on_key)
 
     plt.show()
@@ -242,7 +236,7 @@ def close_on_key(event):
 
 def plot_fluctfunct():
 
-    fig = plt.figure(figsize=(10, 6))
+    fig = plt.figure(figsize=(10,6))
     plt.title('Fluctuation function $F_q(s)$')
     plt.xlabel('scale $s$ [pts]')
     plt.ylabel('$F_q(s)$')
