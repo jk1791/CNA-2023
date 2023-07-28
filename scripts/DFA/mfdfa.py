@@ -129,7 +129,7 @@ def plot_deriv(hoelder,falpha,tau,hurst_est,qzero_pos):
         right_width = hoelder[0] - hoelder[qzero_pos]
         asymmetry = (left_width - right_width) / (left_width + right_width)
 
-    fig = plt.figure(figsize=(10, 6))
+    fig = plt.figure(figsize=(10,6))
     plt.xlim(float(min_xaxis),float(max_xaxis))
     plt.ylim(min_yaxis,max_yaxis)
     plt.grid(linestyle='--',linewidth=0.5,alpha=0.5)
