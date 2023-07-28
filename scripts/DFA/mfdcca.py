@@ -437,7 +437,7 @@ def output1():
 
 # -------------------------------------------------------------- #
 
-parser = argparse.ArgumentParser(description="Multifractal Detrended Fluctuation Analysis of time series")
+parser = argparse.ArgumentParser(description="Multifractal Detrended Cross-correlation Analysis of time series")
 parser.add_argument("--col1", help = "data column 1 (default: 1)")
 parser.add_argument("--col2", help = "data column 2 (default: 1)")
 parser.add_argument("--minsc", help = "minimum scale (default: 10)")
