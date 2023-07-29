@@ -117,7 +117,7 @@ def plot_deriv(hoelder,falpha,tau,hurst_est,qzero_pos):
         min_yaxis = 0.0
         max_yaxis = 1.2
         alpha_width = abs(hoelder[0] - hoelder[-1])
-        if min_scale <= 0.0:
+        if -1 * min_scale == max_scale:
             left_width = hoelder[qzero_pos] - hoelder[-1]
             right_width = hoelder[0] - hoelder[qzero_pos]
             asymmetry = (left_width - right_width) / (left_width + right_width)
