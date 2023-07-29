@@ -59,8 +59,6 @@ def derivative(q_num, hurst_est):
         coeff[0] = (coeff[1] * (triple[1][0] - triple[0][0]) + triple[0][1] - triple[1][1]) / ((triple[0][0]) ** 2.0 - (triple[1][0]) ** 2.0)
         coeff[2] = triple[0][1] - coeff[0] * (triple[0][0]) ** 2.0 - coeff[1] * triple[0][0]
         q_act = q_min + float(j + 1) * q_step
-        if q_act == 0.0:
-            q_act = q_act + q_step / 4.0
         hurst_deriv[j + 1] = 2.0 * coeff[0] * q_act + coeff[1]
         if j == 0:
             hurst_deriv[j] = 2.0 * coeff[0] * q_min + coeff[1]
@@ -105,41 +103,30 @@ def output(alpha,f_alpha,tau,lambda_est,hx_est,hy_est,hxy_est,rhoq):
     with open(outfile, 'w') as file:
         for j in range(q_num):
             q_act = q_min + float(j) * q_step
-            if q_act == 0.0:
-                q_act = q_act + q_step / 4.0
             file.write(f"{q_act} {tau[j]}\n")
     
     outfile = infiles[0][:-4] + '_' + infiles[1][:-4] + '_falpha.dat'
     with open(outfile, 'w') as file:
         for j in range(q_num):
             q_act = q_min + float(j) * q_step
-            if q_act == 0.0:
-                q_act = q_act + q_step / 4.0
             file.write(f"{alpha[j]} {f_alpha[j]}\n")
 
     outfile = infiles[0][:-4] + '_' + infiles[1][:-4] + '_lambdaq.dat'
     with open(outfile, 'w') as file:
         for j in range(q_num):
             q_act = q_min + float(j) * q_step
-            if q_act == 0.0:
-                q_act = q_act + q_step / 4.0
             file.write(f"{q_act} {lambda_est[j]}\n")
 
     outfile = infiles[0][:-4] + '_' + infiles[1][:-4] + '_hxyq.dat'
     with open(outfile, 'w') as file:
         for j in range(q_num):
             q_act = q_min + float(j) * q_step
-            if q_act == 0.0:
-                q_act = q_act + q_step / 4.0
             file.write(f"{q_act} {hxy_est[j]}\n")
 
     outfile = infiles[0][:-4] + '_' + infiles[1][:-4] + '_rhoq.dat'
     with open(outfile, 'w') as file:
         for j in range(q_num):
             q_act = q_min + j * q_step
-            if q_act == 0:
-                q_act += q_step / 4.0
-
             for m in range(num_scales):
                 rhoq[j,m] = fluctfunct[2,j,m] / math.sqrt(fluctfunct[0,j,m] * fluctfunct[1,j,m])
                 act_scale = round(np.exp(np.log(float(min_scale)) + m * logwin_step))
@@ -278,9 +265,7 @@ def legendre_transform():
     qzero_pos = 0
     for j in range(q_num):
         q_act = q_min + j * q_step
-        if q_act == 0.0:
-            q_act += q_step / 4.0
-            qzero_pos = j
+        if q_act == 0.0: qzero_pos = j
         alpha[j] = lambda_est[j] + q_act * lambda_deriv[j]
         f_alpha[j] = q_act * (alpha[j] - lambda_est[j]) + 1.0
         tau[j] = q_act * lambda_est[j] - 1.0
@@ -295,7 +280,9 @@ def legendre_transform():
 def onclick(event):
 
     global click, min_range, max_range, can_close
-    if click > 1: click = 0
+    if click > 1:
+        click = 0
+        can_close = False
     if click == 0:
         if event.xdata is not None:
             min_range = event.xdata
@@ -392,14 +379,19 @@ def fluctuation_function ():
         for j in range(q_num):
             q_act = q_min + j * q_step
             if q_act == 0:
-                q_act += q_step / 4.0
-            fluctfunct[2,j,m] = np.mean(np.sign(segment_var[2]) * (abs(segment_var[2]))**(q_act / 2))
-            fluctfunct[2,j,m] = np.sign(fluctfunct[2,j,m]) * abs(fluctfunct[2,j,m])**(1.0 / q_act)
-
-            fluctfunct[0,j,m] = np.mean(segment_var[0]**(q_act / 2))
-            fluctfunct[0,j,m] = fluctfunct[0,j,m]**(1.0 / q_act)
-            fluctfunct[1,j,m] = np.mean(segment_var[1]**(q_act / 2))
-            fluctfunct[1,j,m] = fluctfunct[1,j,m]**(1.0 / q_act)
+                fluctfunct[2,j,m] = np.mean([np.sign(entry) * math.log(abs(entry)) for entry in segment_var[2]])
+                fluctfunct[2,j,m] = math.exp(fluctfunct[2,j,m] / 2)
+                fluctfunct[0,j,m] = np.mean([math.log(entry) for entry in segment_var[0]])
+                fluctfunct[0,j,m] = math.exp(fluctfunct[0,j,m] / 2)
+                fluctfunct[1,j,m] = np.mean([math.log(entry) for entry in segment_var[1]])
+                fluctfunct[1,j,m] = math.exp(fluctfunct[1,j,m] / 2)
+            else:
+                fluctfunct[2,j,m] = np.mean(np.sign(segment_var[2]) * (abs(segment_var[2]))**(q_act / 2))
+                fluctfunct[2,j,m] = np.sign(fluctfunct[2,j,m]) * abs(fluctfunct[2,j,m])**(1.0 / q_act)
+                fluctfunct[0,j,m] = np.mean(segment_var[0]**(q_act / 2))
+                fluctfunct[0,j,m] = fluctfunct[0,j,m]**(1.0 / q_act)
+                fluctfunct[1,j,m] = np.mean(segment_var[1]**(q_act / 2))
+                fluctfunct[1,j,m] = fluctfunct[1,j,m]**(1.0 / q_act)
 
     return fluctfunct
 
@@ -410,9 +402,6 @@ def output1():
     with open(outfile, 'w') as file:
         for j in range(q_num):
             q_act = q_min + j * q_step
-            if q_act == 0:
-                q_act += q_step / 4.0
-
             for m in range(num_scales):
                 act_scale = round(np.exp(np.log(min_scale) + m * logwin_step))
                 file.write(f'{q_act} {act_scale} {fluctfunct[2,j,m]}\n')
@@ -422,9 +411,6 @@ def output1():
     with open(outfile, 'w') as file:
         for j in range(q_num):
             q_act = q_min + j * q_step
-            if q_act == 0:
-                q_act += q_step / 4.0
-
             for m in range(num_scales):
                 act_scale = round(np.exp(np.log(min_scale) + m * logwin_step))
                 file.write(f'{q_act} {act_scale} {fluctfunct[0,j,m]}\n')
@@ -434,9 +420,6 @@ def output1():
     with open(outfile, 'w') as file:
         for j in range(q_num):
             q_act = q_min + j * q_step
-            if q_act == 0:
-                q_act += q_step / 4.0
-
             for m in range(num_scales):
                 act_scale = round(np.exp(np.log(min_scale) + m * logwin_step))
                 file.write(f'{q_act} {act_scale} {fluctfunct[1,j,m]}\n')
