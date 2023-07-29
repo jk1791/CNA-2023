@@ -59,8 +59,6 @@ def derivative(q_num, hurst_est):
         coeff[0] = (coeff[1] * (triple[1][0] - triple[0][0]) + triple[0][1] - triple[1][1]) / ((triple[0][0]) ** 2.0 - (triple[1][0]) ** 2.0)
         coeff[2] = triple[0][1] - coeff[0] * (triple[0][0]) ** 2.0 - coeff[1] * triple[0][0]
         q_act = q_min + float(j + 1) * q_step
-        if q_act == 0.0:
-            q_act = q_act + q_step / 4.0
         hurst_deriv[j + 1] = 2.0 * coeff[0] * q_act + coeff[1]
         if j == 0:
             hurst_deriv[j] = 2.0 * coeff[0] * q_min + coeff[1]
@@ -77,24 +75,18 @@ def output(alpha, f_alpha, tau, hurst_est):
     with open(outfile, 'w') as file:
         for j in range(q_num):
             q_act = q_min + float(j) * q_step
-            if q_act == 0.0:
-                q_act = q_act + q_step / 4.0
             file.write(f"{q_act} {tau[j]}\n")
     
     outfile = infile[:-14] + '_falpha.dat'
     with open(outfile, 'w') as file:
         for j in range(q_num):
             q_act = q_min + float(j) * q_step
-            if q_act == 0.0:
-                q_act = q_act + q_step / 4.0
             file.write(f"{alpha[j]} {f_alpha[j]}\n")
 
     outfile = infile[:-14] + '_hurst.dat'
     with open(outfile, 'w') as file:
         for j in range(q_num):
             q_act = q_min + float(j) * q_step
-            if q_act == 0.0:
-                q_act = q_act + q_step / 4.0
             file.write(f"{q_act} {hurst_est[j]}\n")
 
 # -------------------------------------------------------------- #
@@ -195,9 +187,7 @@ def legendre_transform():
     qzero_pos = 0
     for j in range(q_num):
         q_act = q_min + j * q_step
-        if q_act == 0.0:
-            q_act += q_step / 4.0
-            qzero_pos = j
+        if q_act == 0.0: qzero_pos = j
         alpha[j] = hurst_est[j] + q_act * hurst_deriv[j]
         f_alpha[j] = q_act * (alpha[j] - hurst_est[j]) + 1.0
         tau[j] = q_act * hurst_est[j] - 1.0
@@ -211,7 +201,9 @@ def legendre_transform():
 def onclick(event):
 
     global click, min_range, max_range, can_close
-    if click > 1: click = 0
+    if click > 1:
+        click = 0
+        can_close = False
     if click == 0:
         if event.xdata is not None:
             min_range = event.xdata
@@ -292,10 +284,11 @@ def fluctuation_function():
         for j in range(q_num):
             q_act = q_min + j * q_step
             if q_act == 0:
-                q_act += q_step / 4.0
-
-            fluctfunct[j,m] = np.mean(segment_var**(q_act / 2))
-            fluctfunct[j,m] = fluctfunct[j,m]**(1.0 / q_act)
+                fluctfunct[j,m] = np.mean([math.log(entry) for entry in segment_var])
+                fluctfunct[j,m] = math.exp(fluctfunct[j,m] / 2)
+            else:
+                fluctfunct[j,m] = np.mean(segment_var**(q_act / 2))
+                fluctfunct[j,m] = fluctfunct[j,m]**(1.0 / q_act)
 
     return fluctfunct
 
@@ -306,9 +299,6 @@ def output1():
     with open(outfile, 'w') as file:
         for j in range(q_num):
             q_act = q_min + j * q_step
-            if q_act == 0:
-                q_act += q_step / 4.0
-
             for m in range(num_scales):
                 act_scale = round(np.exp(np.log(min_scale) + m * logwin_step))
                 file.write(f'{q_act} {act_scale} {fluctfunct[j,m]}\n')
