@@ -1,3 +1,6 @@
+# Author: Jaroslaw Kwapien, IFJ PAN, Kraków, Poland
+# MIT License
+
 import numpy as np
 import math
 from scipy import special
@@ -439,7 +442,7 @@ parser.add_argument("--polyord", help = "detrending polynomial order (default: 2
 parser.add_argument("--length", help = "number of data points to be considered (default: all)")
 parser.add_argument("--remove", help = "remove sequences of zeros [no/yes] (default: yes)")
 parser.add_argument("--numz", help = "maximum allowed sequence of zeros (default: 10)")
-parser.add_argument("--funct", help = "function to be plotted [hurstq/tauq/falpha] (default: falpha)")
+parser.add_argument("--funct", help = "function to be plotted [hurstq/tauq/falpha/rhoq] (default: falpha)")
 parser.add_argument('filename1', help="name of the 1st data file")
 parser.add_argument('filename2', help="name of the 2nd data file")
 

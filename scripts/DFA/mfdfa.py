@@ -1,3 +1,6 @@
+# Author: Jaroslaw Kwapien, IFJ PAN, Kraków, Poland
+# MIT License
+
 import numpy as np
 import math
 from scipy import special
