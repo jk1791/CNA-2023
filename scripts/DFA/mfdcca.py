@@ -540,7 +540,7 @@ if num_points[0] != num_points[1]:
 
 for k in range(2):
     if ts_lngth > 0 and ts_lngth < num_points[k]:
-        del signal[k][:ts_lngth]
+        signal[k] = signal[k][:ts_lngth]
     else:
         ts_lngth = num_points[k]
 
