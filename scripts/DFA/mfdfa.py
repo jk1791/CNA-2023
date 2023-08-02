@@ -117,7 +117,7 @@ def plot_deriv(hoelder,falpha,tau,hurst_est,qzero_pos):
         min_yaxis = 0.0
         max_yaxis = 1.2
         alpha_width = abs(hoelder[0] - hoelder[-1])
-        if -1 * min_scale == max_scale:
+        if -1 * q_min == q_max:
             left_width = hoelder[qzero_pos] - hoelder[-1]
             right_width = hoelder[0] - hoelder[qzero_pos]
             asymmetry = (left_width - right_width) / (left_width + right_width)
@@ -152,7 +152,7 @@ def plot_deriv(hoelder,falpha,tau,hurst_est,qzero_pos):
         if asymmetry != 'undef':
             plt.text(0.75,0.2, f'$A_{alpha_subscript}$={asymmetry:.2f}', transform=plt.gcf().transFigure, fontsize=15)
         else:
-            plt.text(0.75,0.15,f'$A_{alpha_subscript}$={asymmetry}', transform=plt.gcf().transFigure, fontsize=15)
+            plt.text(0.75,0.2,f'$A_{alpha_subscript}$={asymmetry}', transform=plt.gcf().transFigure, fontsize=15)
 
     fig.canvas.mpl_connect('key_press_event',close_on_key)
 
