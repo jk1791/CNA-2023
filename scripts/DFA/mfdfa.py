@@ -401,10 +401,10 @@ with open(infile, 'r') as f:
         signal.append(float(items[column - 1]))
 
 if ts_lngth > 0 and ts_lngth < num_points:
-    del signal[:ts_lngth]
+    signal = signal[:ts_lngth]
 else:
     ts_lngth = num_points
-       
+     
 error = []
 num_err = 0
 eqval_lngth = 1
