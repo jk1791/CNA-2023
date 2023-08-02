@@ -1,24 +1,39 @@
+# Author: Jaroslaw Kwapien, IFJ PAN, Kraków, Poland
+# MIT License
+
 import numpy as np
+import argparse
+import sys
 
 # -------------------------------------------------------------- #
 
-#    randomize time series by shuffling: data points or FFT phases (21.07.2023)
-#
-#    INPUT PARAMETERS:
+parser = argparse.ArgumentParser(description="Randomization of time series")
+parser.add_argument("--col", help = "time series column (default: 1)")
+parser.add_argument("--numrealiz", help = "number of independent realizations (default: 1)")
+parser.add_argument("--fourier", help = "Fourier surrogates [y / n] (default: n)")
+parser.add_argument('filename', help="name of the output data file (default: poisson.dat")
 
-# input file
-infile = "pareto_signed_b4.0_T100k.dat"
-# data column
-column = 1
-# number of realizations
-num_surr = 1
-# randomization method [f - Fourier / s - shuffling]
-letter = 'f'
+args = parser.parse_args()
 
-# ============================================================ 
+if args.col is None:
+    column = 1
+else:
+    column = int(args.col)
+if args.numrealiz is None:
+    num_surr = 1
+else:
+    num_surr = int(args.numrealiz)
+if args.fourier is None:
+    four_flag = False
+else:
+    letter = int(args.fourier)
+    if letter == 'y': four_flag = True
+if args.filename is None:
+    infile = "type_file_name_here.dat"
+else:
+    infile = args.filename
 
-flag = False
-if letter == 'f': flag = True
+# -------------------------------------------------------------- #
 
 signal = []
 
@@ -33,7 +48,7 @@ ts_lngth = len(signal)
 surrogates = np.zeros((num_surr,ts_lngth))
 
 for j in range(num_surr):
-    if flag:
+    if four_flag:
         fft = np.fft.rfft(signal)
         fft_ampl = np.abs(fft)
         random_phases = np.exp(1j * (np.angle(fft) + 2 * np.pi * np.random.random(len(fft))))
