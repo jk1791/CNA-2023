@@ -74,19 +74,19 @@ def derivative(q_num, hurst_est):
 
 def output(alpha, f_alpha, tau, hurst_est):
 
-    outfile = infile[:-14] + '_tau.dat'
+    outfile = infile[:-4] + '_tau.dat'
     with open(outfile, 'w') as file:
         for j in range(q_num):
             q_act = q_min + float(j) * q_step
             file.write(f"{q_act} {tau[j]}\n")
     
-    outfile = infile[:-14] + '_falpha.dat'
+    outfile = infile[:-4] + '_falpha.dat'
     with open(outfile, 'w') as file:
         for j in range(q_num):
             q_act = q_min + float(j) * q_step
             file.write(f"{alpha[j]} {f_alpha[j]}\n")
 
-    outfile = infile[:-14] + '_hurst.dat'
+    outfile = infile[:-4] + '_hurst.dat'
     with open(outfile, 'w') as file:
         for j in range(q_num):
             q_act = q_min + float(j) * q_step
@@ -158,6 +158,11 @@ def plot_deriv(hoelder,falpha,tau,hurst_est,qzero_pos):
             plt.text(0.75,0.2,f'$A_{alpha_subscript}$={asymmetry}', transform=plt.gcf().transFigure, fontsize=15)
 
     fig.canvas.mpl_connect('key_press_event',close_on_key)
+
+    if funct == 'hurstq': plotfile = infile[:-4] + '_hurstq.png'
+    if funct == 'tauq': plotfile = infile[:-4] + '_tauq.png'
+    if funct == 'falpha': plotfile = infile[:-4] + '_falpha.png'
+    plt.savefig(plotfile)
 
     plt.show()
 
