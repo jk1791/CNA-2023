@@ -79,7 +79,7 @@ def plot_rhoq(rhoq):
         renyi[j] = q_min + j * q_step
     min_xaxis = scales[0]
     max_xaxis = scales[-1]
-    min_yaxis = 0.0
+    min_yaxis = -1.1
     max_yaxis = 1.1
     fig = plt.figure(figsize=(10,6))
     plt.title('Detrended cross-correlation coefficient $\\rho_q(s)$')
@@ -95,6 +95,9 @@ def plot_rhoq(rhoq):
     plt.grid(linestyle='--',linewidth=0.5,alpha=0.5)
 
     fig.canvas.mpl_connect('key_press_event',close_on_key)
+
+    plotfile = infiles[0][:-4] + '_' + infiles[1][:-4] + '_rhoq.png'
+    plt.savefig(plotfile)
    
     plt.show()
 
@@ -210,6 +213,11 @@ def plot_deriv(hoelder,falpha,tau,lambda_est,hxy_est,qzero_pos):
             plt.text(0.75,0.2,f'$A_{alpha_subscript}$={asymmetry}', transform=plt.gcf().transFigure, fontsize=15)
 
     fig.canvas.mpl_connect('key_press_event',close_on_key)
+
+    if funct == 'hurstq': plotfile = infiles[0][:-4] + '_' + infiles[1][:-4] + '_hurstq.png'
+    if funct == 'tauq': plotfile = infiles[0][:-4] + '_' + infiles[1][:-4] + '_tauq.png'
+    if funct == 'falpha': plotfile = infiles[0][:-4] + '_' + infiles[1][:-4] + '_falpha.png'
+    plt.savefig(plotfile)
 
     plt.show()
 
@@ -331,6 +339,8 @@ def plot_fluctfunct():
             if fluctfunct[2,j,0] > 0: break
         min_yaxis = fluctfunct[2,j,0] / 1.5
     max_yaxis = fluctfunct[2,q_num-1,num_scales-1] * 1.5
+    if min_yaxis < 0: min_yaxis = max_yaxis / 1000
+    if max_yaxis < 0: max_yaxis = abs(max_yaxis) * 1000
     plt.ylim(min_yaxis,max_yaxis)
     plt.grid()
 
